@@ -1,6 +1,6 @@
 # Rahul Kumar | Board-Ready Independent Director Portfolio
 
-A  high-end, stunning, and responsive portfolio website for a **Board-Ready Independent Director**. This project is designed for corporate executives, showcasing expertise in **Technical Governance**, **R&D Oversight**, and **Product Risk Management**.
+A high-end, stunning, and responsive portfolio website for a **Board-Ready Independent Director**. This project is designed for corporate executives, showcasing expertise in **Technical Governance**, **R&D Oversight**, and **Product Risk Management**.
 
 ## 🚀 Live Preview
 You can view the live version of this portfolio here: [Rahul Kumar Portfolio](https://ais-pre-j7cmvdqlzrnru3iu5eyzob-214919273203.asia-east1.run.app)

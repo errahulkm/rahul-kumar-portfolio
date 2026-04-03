@@ -12,7 +12,9 @@ export default function Hero() {
       setImgSrc('/profile.png');
       setHasTriedPng(true);
     } else {
-      setImgSrc("https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=800");
+      // If both fail, don't fallback to external sources
+      // Just keep the broken state or a local placeholder if we had one
+      console.error("Profile image not found in public folder.");
     }
   };
 
