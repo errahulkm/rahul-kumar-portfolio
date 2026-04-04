@@ -18,20 +18,23 @@ export default function Contact() {
     setStatus('submitting');
 
     try {
-      // Using Formspree for easy email delivery without a backend
-      // Note: User should replace 'YOUR_FORMSPREE_ID' with their actual ID from formspree.io
-      const response = await fetch('https://formspree.io/f/xpwzjpqg', {
+      // Using FormSubmit.co for reliable email delivery using the email directly
+      const response = await fetch(`https://formsubmit.co/ajax/${profileData.email}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({
           ...formData,
-          _subject: `New Inquiry from ${formData.name} (${formData.organization})`
+          _subject: `New Board Inquiry: ${formData.name} from ${formData.organization}`,
+          _template: 'table'
         })
       });
 
-      if (response.ok) {
+      const result = await response.json();
+
+      if (response.ok && result.success === 'true') {
         setStatus('success');
         setFormData({ name: '', organization: '', email: '', inquiry: 'Board Appointment', message: '' });
       } else {
