@@ -1,8 +1,53 @@
+import { useState, FormEvent } from 'react';
 import { motion } from 'motion/react';
 import { profileData } from '../data';
-import { Mail, Linkedin, Send, ArrowRight } from 'lucide-react';
+import { Mail, Linkedin, Send, CheckCircle, AlertCircle } from 'lucide-react';
 
 export default function Contact() {
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [formData, setFormData] = useState({
+    name: '',
+    organization: '',
+    email: '',
+    inquiry: 'Board Appointment',
+    message: ''
+  });
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setStatus('submitting');
+
+    try {
+      // Using Formspree for easy email delivery without a backend
+      // Note: User should replace 'YOUR_FORMSPREE_ID' with their actual ID from formspree.io
+      const response = await fetch('https://formspree.io/f/xpwzjpqg', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ...formData,
+          _subject: `New Inquiry from ${formData.name} (${formData.organization})`
+        })
+      });
+
+      if (response.ok) {
+        setStatus('success');
+        setFormData({ name: '', organization: '', email: '', inquiry: 'Board Appointment', message: '' });
+      } else {
+        setStatus('error');
+      }
+    } catch (error) {
+      console.error('Submission error:', error);
+      setStatus('error');
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
   return (
     <section id="contact" className="py-24 bg-charcoal/50 relative overflow-hidden">
       <div className="container mx-auto px-6">
@@ -50,58 +95,104 @@ export default function Contact() {
             viewport={{ once: true }}
             className="glass-card p-10 border border-white/10"
           >
-            <form className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
+            {status === 'success' ? (
+              <div className="text-center py-12">
+                <div className="w-20 h-20 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <CheckCircle className="text-gold" size={40} />
+                </div>
+                <h4 className="text-2xl font-serif mb-4">Message Sent Successfully</h4>
+                <p className="text-white/60 mb-8">Thank you for reaching out. I will review your inquiry and get back to you shortly.</p>
+                <button 
+                  onClick={() => setStatus('idle')}
+                  className="px-8 py-3 border border-gold text-gold rounded-lg hover:bg-gold hover:text-charcoal transition-all"
+                >
+                  Send Another Message
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm text-white/40 font-medium">Full Name</label>
+                    <input 
+                      type="text" 
+                      name="name"
+                      required
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:border-gold/50 focus:outline-none transition-colors"
+                      placeholder="Full Name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm text-white/40 font-medium">Organization</label>
+                    <input 
+                      type="text" 
+                      name="organization"
+                      required
+                      value={formData.organization}
+                      onChange={handleChange}
+                      className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:border-gold/50 focus:outline-none transition-colors"
+                      placeholder="Company Name"
+                    />
+                  </div>
+                </div>
                 <div className="space-y-2">
-                  <label className="text-sm text-white/40 font-medium">Full Name</label>
+                  <label className="text-sm text-white/40 font-medium">Email Address</label>
                   <input 
-                    type="text" 
+                    type="email" 
+                    name="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:border-gold/50 focus:outline-none transition-colors"
-                    placeholder="Full Name"
+                    placeholder="name@company.com"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm text-white/40 font-medium">Organization</label>
-                  <input 
-                    type="text" 
+                  <label className="text-sm text-white/40 font-medium">Nature of Inquiry</label>
+                  <select 
+                    name="inquiry"
+                    value={formData.inquiry}
+                    onChange={handleChange}
                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:border-gold/50 focus:outline-none transition-colors"
-                    placeholder="Company Name"
+                  >
+                    <option className="bg-charcoal">Board Appointment</option>
+                    <option className="bg-charcoal">Advisory Role</option>
+                    <option className="bg-charcoal">Technical Consulting</option>
+                    <option className="bg-charcoal">Other</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm text-white/40 font-medium">Message</label>
+                  <textarea 
+                    name="message"
+                    required
+                    rows={4}
+                    value={formData.message}
+                    onChange={handleChange}
+                    className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:border-gold/50 focus:outline-none transition-colors"
+                    placeholder="How can I assist your board?"
                   />
                 </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm text-white/40 font-medium">Email Address</label>
-                <input 
-                  type="email" 
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:border-gold/50 focus:outline-none transition-colors"
-                  placeholder="name@company.com"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm text-white/40 font-medium">Nature of Inquiry</label>
-                <select className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:border-gold/50 focus:outline-none transition-colors">
-                  <option className="bg-charcoal">Board Appointment</option>
-                  <option className="bg-charcoal">Advisory Role</option>
-                  <option className="bg-charcoal">Technical Consulting</option>
-                  <option className="bg-charcoal">Other</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm text-white/40 font-medium">Message</label>
-                <textarea 
-                  rows={4}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:border-gold/50 focus:outline-none transition-colors"
-                  placeholder="How can I assist your board?"
-                />
-              </div>
-              <button 
-                type="submit"
-                className="w-full py-4 bg-gold text-charcoal font-bold rounded-lg hover:bg-gold-light transition-all flex items-center justify-center gap-3 group"
-              >
-                Send Inquiry
-                <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-              </button>
-            </form>
+                
+                {status === 'error' && (
+                  <div className="flex items-center gap-3 text-red-400 text-sm bg-red-400/10 p-4 rounded-lg border border-red-400/20">
+                    <AlertCircle size={18} />
+                    <p>Something went wrong. Please try again or email directly.</p>
+                  </div>
+                )}
+
+                <button 
+                  type="submit"
+                  disabled={status === 'submitting'}
+                  className="w-full py-4 bg-gold text-charcoal font-bold rounded-lg hover:bg-gold-light transition-all flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {status === 'submitting' ? 'Sending...' : 'Send Inquiry'}
+                  <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                </button>
+              </form>
+            )}
           </motion.div>
         </div>
       </div>
