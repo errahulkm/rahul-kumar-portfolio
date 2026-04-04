@@ -1,19 +1,55 @@
-import { useState, useEffect } from 'react';
+import { useState, FormEvent } from 'react';
 import { motion } from 'motion/react';
 import { profileData } from '../data';
-import { Mail, Linkedin, Send, CheckCircle } from 'lucide-react';
+import { Mail, Linkedin, Send, CheckCircle, AlertCircle } from 'lucide-react';
 
 export default function Contact() {
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [formData, setFormData] = useState({
+    name: '',
+    organization: '',
+    email: '',
+    inquiry: 'Board Appointment',
+    message: ''
+  });
 
-  useEffect(() => {
-    // Check if we just redirected back from a successful submission
-    if (window.location.search.includes('contact_success=true')) {
-      setIsSuccess(true);
-      // Clean up the URL
-      window.history.replaceState({}, document.title, window.location.pathname);
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setStatus('submitting');
+
+    try {
+      // Using FormSubmit.co for reliable email delivery using the email directly
+      const response = await fetch(`https://formsubmit.co/ajax/${profileData.email}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          ...formData,
+          _subject: `New Board Inquiry: ${formData.name} from ${formData.organization}`,
+          _template: 'table'
+        })
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success === 'true') {
+        setStatus('success');
+        setFormData({ name: '', organization: '', email: '', inquiry: 'Board Appointment', message: '' });
+      } else {
+        setStatus('error');
+      }
+    } catch (error) {
+      console.error('Submission error:', error);
+      setStatus('error');
     }
-  }, []);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   return (
     <section id="contact" className="py-24 bg-charcoal/50 relative overflow-hidden">
@@ -62,7 +98,7 @@ export default function Contact() {
             viewport={{ once: true }}
             className="glass-card p-10 border border-white/10"
           >
-            {isSuccess ? (
+            {status === 'success' ? (
               <div className="text-center py-12">
                 <div className="w-20 h-20 bg-gold/20 rounded-full flex items-center justify-center mx-auto mb-6">
                   <CheckCircle className="text-gold" size={40} />
@@ -70,24 +106,14 @@ export default function Contact() {
                 <h4 className="text-2xl font-serif mb-4">Message Sent Successfully</h4>
                 <p className="text-white/60 mb-8">Thank you for reaching out. I will review your inquiry and get back to you shortly.</p>
                 <button 
-                  onClick={() => setIsSuccess(false)}
+                  onClick={() => setStatus('idle')}
                   className="px-8 py-3 border border-gold text-gold rounded-lg hover:bg-gold hover:text-charcoal transition-all"
                 >
                   Send Another Message
                 </button>
               </div>
             ) : (
-              <form 
-                action={`https://formsubmit.co/${profileData.email}`} 
-                method="POST"
-                className="space-y-6"
-              >
-                {/* FormSubmit Configuration */}
-                <input type="hidden" name="_next" value={`${window.location.origin}${window.location.pathname}?contact_success=true#contact`} />
-                <input type="hidden" name="_subject" value="New Board Inquiry from Portfolio" />
-                <input type="hidden" name="_template" value="table" />
-                <input type="hidden" name="_captcha" value="false" />
-
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-sm text-white/40 font-medium">Full Name</label>
@@ -95,6 +121,8 @@ export default function Contact() {
                       type="text" 
                       name="name"
                       required
+                      value={formData.name}
+                      onChange={handleChange}
                       className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:border-gold/50 focus:outline-none transition-colors"
                       placeholder="Full Name"
                     />
@@ -105,6 +133,8 @@ export default function Contact() {
                       type="text" 
                       name="organization"
                       required
+                      value={formData.organization}
+                      onChange={handleChange}
                       className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:border-gold/50 focus:outline-none transition-colors"
                       placeholder="Company Name"
                     />
@@ -116,6 +146,8 @@ export default function Contact() {
                     type="email" 
                     name="email"
                     required
+                    value={formData.email}
+                    onChange={handleChange}
                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:border-gold/50 focus:outline-none transition-colors"
                     placeholder="name@company.com"
                   />
@@ -124,6 +156,8 @@ export default function Contact() {
                   <label className="text-sm text-white/40 font-medium">Nature of Inquiry</label>
                   <select 
                     name="inquiry"
+                    value={formData.inquiry}
+                    onChange={handleChange}
                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:border-gold/50 focus:outline-none transition-colors"
                   >
                     <option className="bg-charcoal">Board Appointment</option>
@@ -138,16 +172,26 @@ export default function Contact() {
                     name="message"
                     required
                     rows={4}
+                    value={formData.message}
+                    onChange={handleChange}
                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 focus:border-gold/50 focus:outline-none transition-colors"
                     placeholder="How can I assist your board?"
                   />
                 </div>
                 
+                {status === 'error' && (
+                  <div className="flex items-center gap-3 text-red-400 text-sm bg-red-400/10 p-4 rounded-lg border border-red-400/20">
+                    <AlertCircle size={18} />
+                    <p>Something went wrong. Please try again or email directly.</p>
+                  </div>
+                )}
+
                 <button 
                   type="submit"
-                  className="w-full py-4 bg-gold text-charcoal font-bold rounded-lg hover:bg-gold-light transition-all flex items-center justify-center gap-3 group"
+                  disabled={status === 'submitting'}
+                  className="w-full py-4 bg-gold text-charcoal font-bold rounded-lg hover:bg-gold-light transition-all flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Send Inquiry
+                  {status === 'submitting' ? 'Sending...' : 'Send Inquiry'}
                   <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                 </button>
               </form>
