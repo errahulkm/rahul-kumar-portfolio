@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, ChangeEvent } from 'react';
 import { motion } from 'motion/react';
 import { profileData } from '../data';
 import { Mail, Linkedin, Send, CheckCircle, AlertCircle } from 'lucide-react';
@@ -46,7 +46,7 @@ export default function Contact() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import BoardProfile from './components/BoardProfile';
+import Products from './components/Products';
 import LeadershipJourney from './components/LeadershipJourney';
 import Insights from './components/Insights';
 import Contact from './components/Contact';
@@ -43,6 +44,7 @@ export default function App() {
       <main>
         <Hero />
         <BoardProfile />
+        <Products />
         <LeadershipJourney />
         <Insights />
         <Contact />
