@@ -17,7 +17,8 @@ import {
   Sparkles,
   FileText,
   PlayCircle,
-  FolderCheck
+  FolderCheck,
+  Download
 } from 'lucide-react';
 
 type Product = (typeof profileData.products)[number];
@@ -486,13 +487,27 @@ export default function Products() {
                       </div>
                     </div>
 
-                    <button
-                      onClick={() => setActiveModalProduct(product)}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-gold hover:text-gold-light group/btn transition-colors"
-                    >
-                      <span>Architecture & RCA</span>
-                      <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
-                    </button>
+                    <div className="flex items-center gap-3">
+                      {'downloadUrl' in product && (product as any).downloadUrl && (
+                        <a
+                          href={(product as any).downloadUrl}
+                          download={(product as any).downloadFilename || 'download'}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-bold transition-all shadow-sm group/dl"
+                          title="Direct download standalone release binary"
+                        >
+                          <Download size={13} className="group-hover/dl:translate-y-0.5 transition-transform" />
+                          <span>Download {((product as any).downloadSize) || 'Release'}</span>
+                        </a>
+                      )}
+
+                      <button
+                        onClick={() => setActiveModalProduct(product)}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-gold hover:text-gold-light group/btn transition-colors"
+                      >
+                        <span>Architecture & RCA</span>
+                        <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                      </button>
+                    </div>
                   </div>
                 </motion.div>
               );
@@ -550,7 +565,20 @@ export default function Products() {
                       {activeModalProduct.title}
                     </h3>
                   </div>
-                  <p className="text-white/70 text-sm mt-1">{activeModalProduct.tagline}</p>
+                  <p className="text-white/70 text-sm mt-1 mb-3">{activeModalProduct.tagline}</p>
+
+                  {'downloadUrl' in activeModalProduct && (activeModalProduct as any).downloadUrl && (
+                    <div className="flex items-center gap-3">
+                      <a
+                        href={(activeModalProduct as any).downloadUrl}
+                        download={(activeModalProduct as any).downloadFilename || 'download'}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-bold transition-all shadow-sm"
+                      >
+                        <Download size={14} />
+                        <span>Download Standalone Release {((activeModalProduct as any).downloadFilename)} ({((activeModalProduct as any).downloadSize)})</span>
+                      </a>
+                    </div>
+                  )}
                 </div>
 
                 {/* Application Screenshot in Modal if available */}

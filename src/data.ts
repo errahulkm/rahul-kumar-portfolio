@@ -121,6 +121,10 @@ export const profileData = {
       image: "/products/stm32-doccraft.png",
       pipelineImage: "/products/stm32-doccraft-pipeline.png",
       outputImage: "/products/stm32-doccraft-output.png",
+      downloadUrl: "https://github.com/errahulkm/rahul-kumar-portfolio/releases/download/v1.0.0/doccraft-mcu-v1.0.0-linux-x86_64.tar.gz",
+      downloadFilename: "doccraft-mcu-v1.0.0-linux-x86_64.tar.gz",
+      downloadSize: "64 MB",
+      releaseNotesUrl: "https://github.com/errahulkm/rahul-kumar-portfolio/releases/tag/v1.0.0",
       problem: {
         headline: "LLM Context Window Exhaustion from 2,000+ Page Semiconductor Manuals",
         description: "Feeding monolithic 2,000+ page Reference Manual PDFs (e.g., STM32 RM0090, RM0487, 50MB+) into modern AI developer tools (Antigravity, Cursor, VS Code, Claude Code) exhausts LLM token context windows, triggers prompt truncation, induces severe register hallucinations, and spikes API token costs.",
@@ -371,6 +375,33 @@ export const profileData = {
         protocols: "SPI, I2C, UART, CAN-FD, USB, Ethernet MAC drivers",
         governance: "AI adoption governance guidelines and silicon qualification sign-offs"
       }
+    }
+  ],
+
+  releases: [
+    {
+      id: "doccraft-mcu-v100",
+      productName: "DocCraft MCU / STM32 DocCraft",
+      version: "v1.0.0",
+      tag: "Production Release",
+      releaseDate: "September 2026",
+      filename: "doccraft-mcu-v1.0.0-linux-x86_64.tar.gz",
+      fileSize: "64 MB",
+      platform: "Linux x86_64 (Standalone Tarball)",
+      downloadUrl: "https://github.com/errahulkm/rahul-kumar-portfolio/releases/download/v1.0.0/doccraft-mcu-v1.0.0-linux-x86_64.tar.gz",
+      releaseNotesUrl: "https://github.com/errahulkm/rahul-kumar-portfolio/releases/tag/v1.0.0",
+      description: "Standalone production release. Fully self-contained with bundled Python 3.12 runtime and UI assets. Zero external dependencies required.",
+      quickStartCommands: [
+        "tar -xzf doccraft-mcu-v1.0.0-linux-x86_64.tar.gz",
+        "cd doccraft-mcu-v1.0.0-linux-x86_64",
+        "./run.sh"
+      ],
+      highlights: [
+        "Zero External Dependencies: Runs on fresh Linux systems without Python or pip.",
+        "100% Offline & Secure: Zero cloud calls, protecting enterprise firmware IP.",
+        "Automatic Port Migration: Automatically switches to next free port if 8000 is occupied.",
+        "High-Fidelity Markdown: Converts 2,000+ page manuals into token-efficient register tables for AI agents."
+      ]
     }
   ]
 };

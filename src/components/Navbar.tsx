@@ -7,6 +7,7 @@ const navLinks = [
   { name: 'Home', href: '#home' },
   { name: 'Board Profile', href: '#board-profile' },
   { name: 'Products Built', href: '#products' },
+  { name: 'Downloads', href: '#downloads' },
   { name: 'Leadership Journey', href: '#leadership-journey' },
   { name: 'Insights', href: '#insights' },
   { name: 'Contact', href: '#contact' },

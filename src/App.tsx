@@ -3,6 +3,7 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import BoardProfile from './components/BoardProfile';
 import Products from './components/Products';
+import Downloads from './components/Downloads';
 import LeadershipJourney from './components/LeadershipJourney';
 import Insights from './components/Insights';
 import Contact from './components/Contact';
@@ -45,6 +46,7 @@ export default function App() {
         <Hero />
         <BoardProfile />
         <Products />
+        <Downloads />
         <LeadershipJourney />
         <Insights />
         <Contact />
